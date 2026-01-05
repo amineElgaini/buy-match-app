@@ -1,0 +1,61 @@
+buy_match_app/
+│
+├── app/
+│   ├── core/
+│   │   └── Database.php
+│   │
+│   ├── models/
+│   │   ├── User.php
+│   │   ├── MatchGame.php
+│   │   ├── Category.php
+│   │   ├── Ticket.php
+│   │   └── Comment.php
+│   │
+│   ├── controllers/
+│   │   ├── AuthController.php
+│   │   ├── MatchController.php
+│   │   ├── TicketController.php
+│   │   ├── CommentController.php
+│   │   └── AdminController.php
+│   │
+│   ├── services/
+│   │   ├── PDFService.php
+│   │   ├── MailService.php
+│   │   └── QRCodeService.php
+│   │
+│   └── middlewares/
+│       ├── AuthMiddleware.php
+│       └── RoleMiddleware.php
+│
+├── public/
+│   ├── index.php
+│   └── .htaccess
+│
+├── views/
+│   ├── auth/
+│   │   ├── login.php
+│   │   └── register.php
+│   │
+│   ├── matches/
+│   │   ├── list.php
+│   │   ├── show.php
+│   │   └── create.php
+│   │
+│   ├── tickets/
+│   │   ├── buy.php
+│   │   └── my_tickets.php
+│   │
+│   ├── admin/
+│   │   ├── users.php
+│   │   └── matches.php
+│   │
+│   └── layouts/
+│       ├── header.php
+│       └── footer.php
+│
+├── storage/
+│   ├── pdf/
+│   └── logs/
+│
+└── config/
+    └── config.php
