@@ -10,7 +10,7 @@ class Database
             self::$pdo = new PDO(
                 "mysql:host=localhost;dbname=buy_match_app;charset=utf8",
                 "root",
-                "",
+                "root",
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
                 ]

@@ -1,10 +1,41 @@
 <?php
 
-require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/MatchGame.php';
+require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Ticket.php';
 
 class AdminController
 {
+    private MatchGame $match;
+    private User $user;
+    private Ticket $ticket;
+
+    public function __construct()
+    {
+        $this->match  = new MatchGame();
+        $this->user   = new User();
+        $this->ticket = new Ticket();
+    }
+    public function dashboard()
+    {
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+            http_response_code(403);
+            exit('Accès interdit');
+        }
+
+        $stats = [
+            'users'           => $this->user->countAll(),
+            'organizers'      => $this->user->countByRole('organizer'),
+            'matches'         => $this->match->countAll(),
+            'approved'        => $this->match->countStatusGlobal('approved'),
+            'pending'         => $this->match->countStatusGlobal('pending'),
+            'tickets_sold'    => $this->ticket->soldGlobal(),
+            'total_revenue'   => $this->ticket->revenueGlobal()
+        ];
+
+        require '../app/views/admin-dashboard.php';
+    }
+
     public function users()
     {
         require '../app/views/admin/users.php';

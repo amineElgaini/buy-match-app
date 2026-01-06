@@ -7,9 +7,6 @@ class Router
         'POST' => [],
     ];
 
-    /**
-     * Register GET route
-     */
     public function get(string $uri, array $action, array $middleware = []): void
     {
         $this->routes['GET'][$this->normalize($uri)] = [
@@ -18,9 +15,6 @@ class Router
         ];
     }
 
-    /**
-     * Register POST route
-     */
     public function post(string $uri, array $action, array $middleware = []): void
     {
         $this->routes['POST'][$this->normalize($uri)] = [
@@ -29,21 +23,24 @@ class Router
         ];
     }
 
-    /**
-     * Dispatch request
-     */
     public function dispatch(): void
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        $uri = $this->normalize(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-        // Exact match first
+        // REMOVE PROJECT FOLDER FROM URI
+        $basePath = '/buy-match';
+        if (strpos($uri, $basePath) === 0) {
+            $uri = substr($uri, strlen($basePath));
+        }
+
+        $uri = $this->normalize($uri);
+
         if (isset($this->routes[$method][$uri])) {
             $this->runRoute($this->routes[$method][$uri]);
             return;
         }
 
-        // Match routes with parameters
         foreach ($this->routes[$method] as $route => $data) {
             if ($this->match($route, $uri, $params)) {
                 $this->runRoute($data, $params);
@@ -55,48 +52,40 @@ class Router
         echo "404 - Page Not Found";
     }
 
-    /**
-     * Run route: middleware + controller action
-     */
     private function runRoute(array $data, array $params = []): void
     {
-        // Run middleware
         if (!empty($data['middleware'])) {
             foreach ($data['middleware'] as $mw) {
                 $this->runMiddleware($mw);
             }
         }
 
-        // Run controller action
         [$controller, $method] = $data['action'];
-        require_once __DIR__ . "/Controllers/{$controller}.php";
+        require_once __DIR__ . "/controllers/{$controller}.php";
         $instance = new $controller();
         call_user_func_array([$instance, $method], $params);
     }
 
-    /**
-     * Middleware handler
-     */
     private function runMiddleware(string $mw): void
     {
         [$name, $param] = array_pad(explode(':', $mw, 2), 2, null);
 
         switch ($name) {
             case 'auth':
-                if (empty($_SESSION['user'])) {
-                    header('Location: /login');
+                if (empty($_SESSION['user_id'])) {
+                    header('Location: /buy-match/login');
                     exit;
                 }
                 break;
 
             case 'role':
-                if (empty($_SESSION['user'])) {
+                if (empty($_SESSION['user_id'])) {
                     http_response_code(403);
                     echo "403 - Forbidden";
                     exit;
                 }
 
-                $userRole = $_SESSION['user']['role'];
+                $userRole = $_SESSION['user_role'];
                 $allowedRoles = array_map('trim', explode(',', $param));
 
                 if (!in_array($userRole, $allowedRoles)) {
@@ -111,9 +100,6 @@ class Router
         }
     }
 
-    /**
-     * Match route with parameters, e.g., /matches/{id}
-     */
     private function match(string $route, string $uri, &$params = []): bool
     {
         $pattern = preg_replace('#\{[^/]+\}#', '([^/]+)', $route);
@@ -128,9 +114,6 @@ class Router
         return false;
     }
 
-    /**
-     * Normalize URI: remove trailing slash
-     */
     private function normalize(string $uri): string
     {
         return rtrim($uri, '/') ?: '/';

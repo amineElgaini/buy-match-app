@@ -59,3 +59,45 @@ CREATE TABLE comments (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (match_id) REFERENCES matches(id)
 );
+
+-----------------------------
+INSERT INTO users (name, email, password, role) VALUES
+('Alice User', 'alice@example.com', '$2y$10$Z4c1CklwnZrqHup074zv0ueswxiYCipKdKEuUbWj2HRHzkyIbPuVC', 'user'), --password=password
+('Bob User', 'bob@example.com', '$2y$10$Z4c1CklwnZrqHup074zv0ueswxiYCipKdKEuUbWj2HRHzkyIbPuVC', 'user'),
+('John Organizer', 'organizer@example.com', '$2y$10$Z4c1CklwnZrqHup074zv0ueswxiYCipKdKEuUbWj2HRHzkyIbPuVC', 'organizer'),
+('Admin Root', 'admin@example.com', '$2y$10$Z4c1CklwnZrqHup074zv0ueswxiYCipKdKEuUbWj2HRHzkyIbPuVC', 'admin');
+
+
+INSERT INTO matches (
+    organizer_id, team1_name, team1_logo,
+    team2_name, team2_logo, date_time,
+    location, max_seats, status
+) VALUES
+(3, 'FC Barcelona', 'barca.png', 'Real Madrid', 'real.png',
+ '2026-02-10 20:00:00', 'Camp Nou', 90000, 'approved'),
+
+(3, 'Manchester City', 'city.png', 'Liverpool', 'liverpool.png',
+ '2026-03-05 21:00:00', 'Etihad Stadium', 55000, 'approved');
+
+
+INSERT INTO categories (match_id, name, price) VALUES
+(1, 'VIP', 250.00),
+(1, 'Premium', 150.00),
+(1, 'Standard', 80.00),
+
+(2, 'VIP', 220.00),
+(2, 'Standard', 90.00);
+
+
+INSERT INTO tickets (
+    user_id, match_id, category_id, seat_number, qr_code
+) VALUES
+(1, 1, 1, 'A1', 'QR001ABC'),
+(1, 1, 2, 'B15', 'QR002ABC'),
+(2, 2, 5, 'C10', 'QR003ABC');
+
+
+INSERT INTO comments (user_id, match_id, rating, comment) VALUES
+(1, 1, 5, 'Amazing match, great atmosphere!'),
+(2, 1, 4, 'Very good match, seats were comfortable'),
+(1, 2, 3, 'Good game but parking was difficult');
