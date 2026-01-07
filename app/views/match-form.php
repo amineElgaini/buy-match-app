@@ -81,7 +81,6 @@
     <div class="card">
         <h2>Créer un Match</h2>
 
-        <!-- Alerts -->
         <?php if (isset($_GET['success'])): ?>
             <div class="alert alert-success">✅ Match créé avec succès !</div>
         <?php elseif (isset($_GET['error'])): ?>

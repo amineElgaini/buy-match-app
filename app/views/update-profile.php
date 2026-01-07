@@ -54,7 +54,6 @@
         </form>
     </div>
 
-    <!-- Purchased Matches & Comment Form -->
     <div class="card">
         <h2>Mes Matches</h2>
 
@@ -64,12 +63,10 @@
                     <h3><?= $match['team1_name'] ?> vs <?= $match['team2_name'] ?></h3>
                     <p><strong>Date :</strong> <?= $match['date_time'] ?> | <strong>Lieu :</strong> <?= $match['location'] ?></p>
 
-                    <!-- Show existing comment if available -->
                     <?php if (!empty($match['comment'])): ?>
                         <p><strong>Votre commentaire :</strong> <?= htmlspecialchars($match['comment']['comment']) ?> (<?= $match['comment']['rating'] ?>/5)</p>
                     <?php endif; ?>
 
-                    <!-- Comment form -->
                     <form method="POST" action="/buy-match/<?= $match['id'] ?>/comment">
                         <input type="number" name="rating" min="1" max="5" placeholder="Note (1-5)" required>
                         <textarea name="comment" rows="2" placeholder="Votre commentaire" required></textarea>

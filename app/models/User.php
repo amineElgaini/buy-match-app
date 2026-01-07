@@ -19,13 +19,9 @@ class User
         $this->pdo = Database::getConnection();
     }
 
-    /**
-     * Save user (create or update)
-     */
     public function save(): bool
     {
         if ($this->id === null) {
-            // New user → hash password
             $stmt = $this->pdo->prepare("
             INSERT INTO users (name,email,password,role,active)
             VALUES (?,?,?,?,?)
@@ -35,13 +31,12 @@ class User
                 $this->email,
                 password_hash($this->password, PASSWORD_DEFAULT),
                 $this->role,
-                $this->active ? 1 : 0, // ensure integer
+                $this->active ? 1 : 0,
             ]);
             $this->id = (int)$this->pdo->lastInsertId();
             return $result;
         }
 
-        // Update existing user
         $params = [$this->name, $this->email];
         $sql = "UPDATE users SET name=?, email=?";
 
@@ -52,34 +47,24 @@ class User
 
         $sql .= ", role=?, active=? WHERE id=?";
         $params[] = $this->role;
-        $params[] = $this->active ? 1 : 0; // <-- FIX HERE
+        $params[] = $this->active ? 1 : 0;
         $params[] = $this->id;
 
         return $this->pdo->prepare($sql)->execute($params);
     }
 
-
-    /**
-     * Disable user (active = false)
-     */
     public function disable(): bool
     {
         $this->active = false;
         return $this->save();
     }
 
-    /**
-     * Enable user (active = true)
-     */
     public function enable(): bool
     {
         $this->active = true;
         return $this->save();
     }
 
-    /**
-     * Find a user by ID
-     */
     public static function find(int $id): ?User
     {
         $stmt = Database::getConnection()->prepare("SELECT * FROM users WHERE id=?");
@@ -94,9 +79,6 @@ class User
         return $user;
     }
 
-    /**
-     * Find a user by email
-     */
     public static function findByEmail(string $email): ?User
     {
         $stmt = Database::getConnection()->prepare("SELECT * FROM users WHERE email=?");
@@ -111,18 +93,12 @@ class User
         return $user;
     }
 
-    /**
-     * Return all users
-     */
     public static function all(): array
     {
         $stmt = Database::getConnection()->query("SELECT * FROM users ORDER BY id DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Authenticate user
-     */
     public static function login(string $email, string $password): ?User
     {
         $user = self::findByEmail($email);
@@ -131,18 +107,12 @@ class User
         return $user;
     }
 
-    /**
-     * Count all users
-     */
     public static function countAll(): int
     {
         $stmt = Database::getConnection()->query("SELECT COUNT(*) FROM users");
         return (int) $stmt->fetchColumn();
     }
 
-    /**
-     * Count users by role
-     */
     public static function countByRole(string $role): int
     {
         $stmt = Database::getConnection()->prepare("SELECT COUNT(*) FROM users WHERE role=?");

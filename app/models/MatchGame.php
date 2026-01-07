@@ -45,7 +45,6 @@ class MatchGame
 
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Group comments under each match
     $matches = [];
     foreach ($rows as $row) {
         $matchId = $row['id'];
@@ -67,7 +66,6 @@ class MatchGame
             ];
         }
 
-        // Add comment if it exists
         if ($row['comment_id']) {
             $matches[$matchId]['comments'][] = [
                 'id'            => $row['comment_id'],
@@ -80,10 +78,8 @@ class MatchGame
         }
     }
 
-    // Reindex numerically
     return array_values($matches);
 }
-
 
     public function create(): bool
     {

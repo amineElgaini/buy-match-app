@@ -19,7 +19,6 @@ class Ticket
         $this->pdo = Database::getConnection();
     }
 
-    // Save a new ticket
     public function save(): bool
     {
         $sql = "INSERT INTO tickets
@@ -42,7 +41,6 @@ class Ticket
         return $result;
     }
 
-    // Get tickets by user
     public function getByUser(int $userId): array
     {
         $sql = "SELECT t.*, m.team1_name, m.team2_name, m.date_time, m.location
@@ -82,10 +80,9 @@ class Ticket
 
         $total = $result ? (int)$result['total'] : 0;
 
-        // Returns true if user has 3 or more tickets
         return $total >= 3;
     }
-        public function getMatchesByUser(int $userId): array
+    public function getMatchesByUser(int $userId): array
     {
         $stmt = $this->pdo->prepare("
             SELECT m.*

@@ -4,7 +4,6 @@ require_once __DIR__ . './../../config/database.php';
 
 class Category
 {
-    // ✅ Attributes (table columns)
     public ?int $id = null;
     public int $match_id;
     public string $name;
@@ -17,11 +16,6 @@ class Category
         $this->pdo = Database::getConnection();
     }
 
-    /**
-     * Get all categories for a given match
-     * @param int $matchId
-     * @return array
-     */
     public function byMatch(int $matchId): array
     {
         $stmt = $this->pdo->prepare(
@@ -32,9 +26,6 @@ class Category
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Save a new category
-     */
     public function save(): bool
     {
         $sql = "INSERT INTO categories (match_id, name, price) VALUES (?, ?, ?)";
@@ -53,9 +44,6 @@ class Category
         return $result;
     }
 
-    /**
-     * Update category
-     */
     public function update(): bool
     {
         $sql = "UPDATE categories SET name = ?, price = ? WHERE id = ?";
@@ -68,9 +56,6 @@ class Category
         ]);
     }
 
-    /**
-     * Delete category
-     */
     public function delete(): bool
     {
         $sql = "DELETE FROM categories WHERE id = ?";

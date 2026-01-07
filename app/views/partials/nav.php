@@ -1,5 +1,4 @@
 <style>
-    /* Navbar Container */
     header {
         display: flex;
         justify-content: space-between;
@@ -13,14 +12,12 @@
         z-index: 1000;
     }
 
-    /* Logo / Brand */
     header h1 {
         font-size: 24px;
         margin: 0;
         font-weight: 700;
     }
 
-    /* Navigation Links */
     nav a {
         color: white;
         text-decoration: none;
@@ -30,7 +27,6 @@
         position: relative;
     }
 
-    /* Hover effect */
     nav a::after {
         content: "";
         position: absolute;
@@ -50,7 +46,6 @@
         color: #ffdd57;
     }
 
-    /* Responsive */
     @media (max-width: 600px) {
         header {
             flex-direction: column;
