@@ -16,11 +16,6 @@ class OrganizerController
 
     public function dashboard()
     {
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'organizer') {
-            http_response_code(403);
-            exit('Accès interdit');
-        }
-
         $organizerId = $_SESSION['user_id'];
 
         $stats = [

@@ -1,19 +1,25 @@
 <?php
-
 require_once __DIR__ . '/../models/Comment.php';
 
 class CommentController
 {
-    public function store()
+    private Comment $comment;
+
+    public function __construct()
     {
-        $comment = new Comment();
-        $comment->user_id = $_SESSION['user']['id'];
-        $comment->match_id = $_POST['match_id'];
-        $comment->rating = $_POST['rating'];
-        $comment->comment = $_POST['comment'];
+        $this->comment  = new Comment();
+    }
 
-        $comment->save();
+    public function store($match_id)
+    {
+        $this->comment->user_id = $_SESSION['user_id'];
+        $this->comment->match_id = $match_id;
+        $this->comment->rating = $_POST['rating'];
+        $this->comment->comment = $_POST['comment'];
 
-        header('Location: /matches/' . $_POST['match_id']);
+        $this->comment->save();
+
+        header('Location: /buy-match/profile');
+        exit;
     }
 }

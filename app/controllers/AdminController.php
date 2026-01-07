@@ -16,57 +16,73 @@ class AdminController
         $this->user   = new User();
         $this->ticket = new Ticket();
     }
+
     public function dashboard()
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-            http_response_code(403);
-            exit('Accès interdit');
-        }
-
         $stats = [
-            'users'           => $this->user->countAll(),
-            'organizers'      => $this->user->countByRole('organizer'),
+            'users'           => User::countAll(),
+            'organizers'      => User::countByRole('organizer'),
             'matches'         => $this->match->countAll(),
             'approved'        => $this->match->countStatusGlobal('approved'),
             'pending'         => $this->match->countStatusGlobal('pending'),
+            'refused'         => $this->match->countStatusGlobal('refused'),
             'tickets_sold'    => $this->ticket->soldGlobal(),
-            'total_revenue'   => $this->ticket->revenueGlobal()
+            'total_revenue'   => $this->ticket->revenueGlobal(),
+            'pending_matches' => $this->match->getPendingMatches(),
         ];
 
         require '../app/views/admin-dashboard.php';
     }
 
+    public function approveMatch($id)
+    {
+        $this->match->updateStatus((int)$id, 'approved');
+        header('Location: /buy-match/admin-dashboard');
+        exit;
+    }
+
+    public function refuseMatch($id)
+    {
+        $this->match->updateStatus((int)$id, 'refused');
+        header('Location: /buy-match/admin-dashboard');
+        exit;
+    }
+
     public function users()
     {
-        require '../app/views/admin/users.php';
+        $users = User::all();
+        require '../app/views/manage-users.php';
     }
 
     public function disableUser()
     {
-        $user = new User();
-        $user->id = $_POST['user_id'];
-        $user->disable();
+        if (!empty($_POST['user_id'])) {
+            $user = User::find((int)$_POST['user_id']);
+            if ($user) {
+                $user->disable();
+            }
+        }
 
-        header('Location: /admin/users');
+        header('Location: /buy-match/admin/users');
+        exit;
+    }
+
+    public function enableUser()
+    {
+        if (!empty($_POST['user_id'])) {
+            $user = User::find((int)$_POST['user_id']);
+            if ($user) {
+                $user->enable();
+            }
+        }
+
+        header('Location: /buy-match/admin/users');
+        exit;
     }
 
     public function matches()
     {
-        require '../app/views/admin/matches.php';
-    }
-
-    public function approveMatch()
-    {
-        $match = new MatchGame();
-        $match->id = $_POST['match_id'];
-        $match->approve();
-
-        header('Location: /admin/matches');
-    }
-
-    public function refuseMatch()
-    {
-        // similar logic
-        header('Location: /admin/matches');
+        $allMatches = $this->match->getApprovedMatches();
+        require '../app/views/matches.php';
     }
 }

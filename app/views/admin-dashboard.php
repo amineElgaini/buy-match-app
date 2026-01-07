@@ -48,7 +48,6 @@
 
     <?php include __DIR__ . '/partials/nav.php'; ?>
 
-
     <h1>🛠 Admin Statistics</h1>
 
     <div class="grid">
@@ -87,6 +86,43 @@
             <p>Total Revenue</p>
         </div>
     </div>
+
+    <h3>Pending Matches</h3>
+
+    <?php if (!empty($stats['pending_matches'])): ?>
+        <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Teams</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Organizer</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($stats['pending_matches'] as $match): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($match['team1_name']) ?> vs <?= htmlspecialchars($match['team2_name']) ?></td>
+                        <td><?= htmlspecialchars($match['date_time']) ?></td>
+                        <td><?= htmlspecialchars($match['location']) ?></td>
+                        <td><?= htmlspecialchars($match['organizer_name']) ?></td>
+                        <td>
+                            <form method="POST" action="/buy-match/admin/matches/<?= $match['id'] ?>/approve" style="display:inline;">
+                                <button type="submit" style="background:green;color:white;border:none;padding:5px 10px;border-radius:4px;">Approve</button>
+                            </form>
+
+                            <form method="POST" action="/buy-match/admin/matches/<?= $match['id'] ?>/refuse" style="display:inline;">
+                                <button type="submit" style="background:red;color:white;border:none;padding:5px 10px;border-radius:4px;">Refuse</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>No pending matches.</p>
+    <?php endif; ?>
 
 </body>
 

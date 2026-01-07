@@ -78,6 +78,7 @@
 
             <?= $_SESSION['user_role'] === 'admin' ? '<a href="/buy-match/admin-dashboard">Dashbaord</a>' : '' ?>
             <?= $_SESSION['user_role'] === 'organizer' ? '<a href="/buy-match/organizer-dashboard">Dashbaord</a>' : '' ?>
+            <?= $_SESSION['user_role'] === 'admin' ? '<a href="/buy-match/admin/users">Manage Users</a>' : '' ?>
             <a href="/buy-match/logout">Déconnexion</a>
         <?php else: ?>
             <a href="/buy-match/login">Connexion</a>

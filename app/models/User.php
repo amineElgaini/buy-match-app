@@ -12,28 +12,36 @@ class User
     public bool $active = true;
     public ?string $created_at = null;
 
+    private PDO $pdo;
+
+    public function __construct()
+    {
+        $this->pdo = Database::getConnection();
+    }
+
+    /**
+     * Save user (create or update)
+     */
     public function save(): bool
     {
-        $pdo = Database::getConnection();
-
         if ($this->id === null) {
             // New user → hash password
-            $stmt = $pdo->prepare("
-            INSERT INTO users (name, email, password, role, active)
-            VALUES (?, ?, ?, ?, ?)
+            $stmt = $this->pdo->prepare("
+            INSERT INTO users (name,email,password,role,active)
+            VALUES (?,?,?,?,?)
         ");
             $result = $stmt->execute([
                 $this->name,
                 $this->email,
                 password_hash($this->password, PASSWORD_DEFAULT),
                 $this->role,
-                $this->active
+                $this->active ? 1 : 0, // ensure integer
             ]);
-            $this->id = (int)$pdo->lastInsertId();
+            $this->id = (int)$this->pdo->lastInsertId();
             return $result;
         }
 
-        // Update fields
+        // Update existing user
         $params = [$this->name, $this->email];
         $sql = "UPDATE users SET name=?, email=?";
 
@@ -44,43 +52,39 @@ class User
 
         $sql .= ", role=?, active=? WHERE id=?";
         $params[] = $this->role;
-        $params[] = $this->active;
+        $params[] = $this->active ? 1 : 0; // <-- FIX HERE
         $params[] = $this->id;
 
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute($params);
+        return $this->pdo->prepare($sql)->execute($params);
     }
 
 
+    /**
+     * Disable user (active = false)
+     */
     public function disable(): bool
     {
         $this->active = false;
         return $this->save();
     }
 
-    public static function findByEmail(string $email): ?User
+    /**
+     * Enable user (active = true)
+     */
+    public function enable(): bool
     {
-        $stmt = Database::getConnection()
-            ->prepare("SELECT * FROM users WHERE email=?");
-        $stmt->execute([$email]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$data) return null;
-
-        $user = new User();
-        foreach ($data as $key => $value) {
-            $user->$key = $value;
-        }
-        return $user;
+        $this->active = true;
+        return $this->save();
     }
 
+    /**
+     * Find a user by ID
+     */
     public static function find(int $id): ?User
     {
-        $stmt = Database::getConnection()
-            ->prepare("SELECT * FROM users WHERE id=?");
+        $stmt = Database::getConnection()->prepare("SELECT * FROM users WHERE id=?");
         $stmt->execute([$id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
         if (!$data) return null;
 
         $user = new User();
@@ -90,28 +94,58 @@ class User
         return $user;
     }
 
+    /**
+     * Find a user by email
+     */
+    public static function findByEmail(string $email): ?User
+    {
+        $stmt = Database::getConnection()->prepare("SELECT * FROM users WHERE email=?");
+        $stmt->execute([$email]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$data) return null;
+
+        $user = new User();
+        foreach ($data as $key => $value) {
+            $user->$key = $value;
+        }
+        return $user;
+    }
+
+    /**
+     * Return all users
+     */
+    public static function all(): array
+    {
+        $stmt = Database::getConnection()->query("SELECT * FROM users ORDER BY id DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Authenticate user
+     */
     public static function login(string $email, string $password): ?User
     {
         $user = self::findByEmail($email);
-
         if (!$user || !$user->active) return null;
-
         if (!password_verify($password, $user->password)) return null;
-
         return $user;
     }
 
-    public function countAll(): int
+    /**
+     * Count all users
+     */
+    public static function countAll(): int
     {
-        return (int) Database::getConnection()
-            ->query("SELECT COUNT(*) FROM users")
-            ->fetchColumn();
+        $stmt = Database::getConnection()->query("SELECT COUNT(*) FROM users");
+        return (int) $stmt->fetchColumn();
     }
 
-    public function countByRole(string $role): int
+    /**
+     * Count users by role
+     */
+    public static function countByRole(string $role): int
     {
-        $stmt = Database::getConnection()
-            ->prepare("SELECT COUNT(*) FROM users WHERE role=?");
+        $stmt = Database::getConnection()->prepare("SELECT COUNT(*) FROM users WHERE role=?");
         $stmt->execute([$role]);
         return (int) $stmt->fetchColumn();
     }

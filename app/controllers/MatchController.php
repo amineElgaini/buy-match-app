@@ -13,29 +13,19 @@ class MatchController
 
     public function __construct()
     {
-        // Initialize models (they internally get PDO connection)
         $this->matchModel = new MatchGame();
         $this->categoryModel = new Category();
         $this->ticket = new Ticket();
     }
 
-    /**
-     * List all approved matches
-     */
     public function index()
     {
-        // Fetch all approved matches
         $matches = $this->matchModel->getApprovedMatches();
         require '../app/views/matches.php';
     }
 
-    /**
-     * Show details for a single match
-     * @param int $id Match ID
-     */
     public function show($id)
     {
-        // Find match by ID
         $match = $this->matchModel->find((int)$id);
         $buyedTicketCount = $this->ticket->buyedTicketCount((int)$id);
 
@@ -45,7 +35,6 @@ class MatchController
             return;
         }
 
-        // Get categories for this match (used for ticket selection)
         $categories = $this->categoryModel->byMatch($match['id']);
 
         require '../app/views/match-detail.php';
@@ -53,7 +42,6 @@ class MatchController
 
     public function createMatch()
     {
-        // Only organizers can create matches
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'organizer') {
             http_response_code(403);
             echo "Accès interdit";
@@ -80,7 +68,7 @@ class MatchController
         $this->matchModel->duration     = (int) ($_POST['duration'] ?? 90);
         $this->matchModel->location     = $_POST['location'];
         $this->matchModel->max_seats    = (int) ($_POST['max_seats'] ?? 2000);
-        $this->matchModel->status       = 'pending'; // new matches pending approval
+        $this->matchModel->status       = 'pending';
 
         $success = $this->matchModel->create();
 

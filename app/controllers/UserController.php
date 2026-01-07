@@ -1,9 +1,20 @@
 <?php
 
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Ticket.php';
+require_once __DIR__ . '/../models/Comment.php';
 
 class UserController
 {
+    private Ticket $ticketModel;
+    private Comment $commentModel;
+
+    public function __construct()
+    {
+        $this->ticketModel  = new Ticket();
+        $this->commentModel = new Comment();
+    }
+
     public function showLogin()
     {
         require '../app/views/login.php';
@@ -23,6 +34,7 @@ class UserController
         $_SESSION['user_email'] = $user->email;
 
         header('Location: /buy-match/matches');
+        exit;
     }
 
     public function showRegister()
@@ -41,27 +53,35 @@ class UserController
         $user->save();
 
         header('Location: /buy-match/login');
+        exit;
     }
 
     public function logout()
     {
         session_destroy();
         header('Location: /buy-match/login');
+        exit;
     }
 
     public function profile()
     {
+        $userId = $_SESSION['user_id'];
+        $matches = $this->ticketModel->getMatchesByUser($userId);
+
+        foreach ($matches as &$match) {
+            $match['comment'] = $this->commentModel->getUserCommentForMatch($userId, $match['id']);
+        }
+        unset($match);
+
+
+
+        $purchasedMatches = $matches;
+
         require '../app/views/update-profile.php';
     }
 
     public function updateProfile()
     {
-        if (!isset($_SESSION['user_id'])) {
-            // Not logged in
-            header('Location: /buy-match/login');
-            exit;
-        }
-
         $user = User::find($_SESSION['user_id']);
         if (!$user) {
             header('Location: /buy-match/profile?error=' . urlencode("Utilisateur introuvable."));
@@ -78,7 +98,6 @@ class UserController
         $success = $user->save();
 
         if ($success) {
-            // Update session data
             $_SESSION['user_name']  = $user->name;
             $_SESSION['user_email'] = $user->email;
 

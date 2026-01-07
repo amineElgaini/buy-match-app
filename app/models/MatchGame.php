@@ -4,7 +4,6 @@ require_once __DIR__ . './../../config/database.php';
 
 class MatchGame
 {
-    // ✅ Attributes (table columns)
     public ?int $id = null;
     public int $organizer_id;
     public string $team1_name;
@@ -25,7 +24,67 @@ class MatchGame
         $this->pdo = Database::getConnection();
     }
 
-    // Inside MatchGame class
+    public function getMatchesWithCommentsByOrganizer(int $organizerId): array
+{
+    $stmt = $this->pdo->prepare("
+        SELECT 
+            m.*,
+            c.id AS comment_id,
+            c.user_id AS commenter_id,
+            u.name AS commenter_name,
+            c.rating,
+            c.comment,
+            c.created_at AS comment_created_at
+        FROM matches m
+        LEFT JOIN comments c ON c.match_id = m.id
+        LEFT JOIN users u ON u.id = c.user_id
+        WHERE m.organizer_id = ?
+        ORDER BY m.date_time ASC, c.created_at ASC
+    ");
+    $stmt->execute([$organizerId]);
+
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Group comments under each match
+    $matches = [];
+    foreach ($rows as $row) {
+        $matchId = $row['id'];
+        if (!isset($matches[$matchId])) {
+            $matches[$matchId] = [
+                'id'             => $row['id'],
+                'organizer_id'   => $row['organizer_id'],
+                'team1_name'     => $row['team1_name'],
+                'team1_logo'     => $row['team1_logo'],
+                'team2_name'     => $row['team2_name'],
+                'team2_logo'     => $row['team2_logo'],
+                'date_time'      => $row['date_time'],
+                'duration'       => $row['duration'],
+                'location'       => $row['location'],
+                'max_seats'      => $row['max_seats'],
+                'status'         => $row['status'],
+                'created_at'     => $row['created_at'],
+                'comments'       => []
+            ];
+        }
+
+        // Add comment if it exists
+        if ($row['comment_id']) {
+            $matches[$matchId]['comments'][] = [
+                'id'            => $row['comment_id'],
+                'user_id'       => $row['commenter_id'],
+                'user_name'     => $row['commenter_name'],
+                'rating'        => $row['rating'],
+                'comment'       => $row['comment'],
+                'created_at'    => $row['comment_created_at'],
+            ];
+        }
+    }
+
+    // Reindex numerically
+    return array_values($matches);
+}
+
+
     public function create(): bool
     {
         $stmt = $this->pdo->prepare("
@@ -48,8 +107,15 @@ class MatchGame
         ]);
     }
 
+    public function updateStatus(int $matchId, string $status): bool
+    {
+        $stmt = $this->pdo->prepare("
+        UPDATE matches SET status = ? WHERE id = ?
+    ");
+        return $stmt->execute([$status, $matchId]);
+    }
 
-    // Fetch all approved matches
+
     public function getApprovedMatches(): array
     {
         $stmt = $this->pdo->query(
@@ -63,7 +129,19 @@ class MatchGame
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Find a match by ID
+    public function getPendingMatches(): array
+    {
+        $stmt = $this->pdo->query(
+            "SELECT m.*, u.name AS organizer_name
+             FROM matches m
+             JOIN users u ON u.id = m.organizer_id
+             WHERE m.status = 'pending'
+             ORDER BY m.date_time ASC"
+        );
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function find(int $id): ?array
     {
         $stmt = $this->pdo->prepare(

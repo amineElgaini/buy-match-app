@@ -41,6 +41,27 @@
             color: #555;
             font-size: 15px;
         }
+
+        .match {
+            background: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
+        }
+
+        .match h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .comments {
+            margin-top: 10px;
+        }
+
+        .comments li {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 
@@ -48,8 +69,7 @@
 
     <?php include __DIR__ . '/partials/nav.php'; ?>
 
-
-    <h1>📊 Organizer Statistics</h1>
+    <h1>📊 Organizer Dashboard</h1>
 
     <div class="grid">
         <div class="card">
@@ -82,6 +102,36 @@
             <p>Total Revenue</p>
         </div>
     </div>
+
+    <h2>🏟️ Matches & Comments</h2>
+
+    <?php if (!empty($matchesWithComments)): ?>
+        <?php foreach ($matchesWithComments as $match): ?>
+            <div class="match">
+                <h3><?= $match['team1_name'] ?> vs <?= $match['team2_name'] ?></h3>
+                <p><strong>Date:</strong> <?= $match['date_time'] ?> | <strong>Location:</strong> <?= $match['location'] ?></p>
+                <p><strong>Status:</strong> <?= ucfirst($match['status']) ?></p>
+
+                <div class="comments">
+                    <strong>Comments:</strong>
+                    <?php if (!empty($match['comments'])): ?>
+                        <ul>
+                            <?php foreach ($match['comments'] as $comment): ?>
+                                <li>
+                                    <strong><?= $comment['user_name'] ?></strong> (<?= $comment['rating'] ?>/5):
+                                    <?= $comment['comment'] ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>No comments yet.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No matches found.</p>
+    <?php endif; ?>
 
 </body>
 

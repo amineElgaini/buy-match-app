@@ -85,6 +85,20 @@ class Ticket
         // Returns true if user has 3 or more tickets
         return $total >= 3;
     }
+        public function getMatchesByUser(int $userId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT m.*
+            FROM matches m
+            JOIN tickets t ON t.match_id = m.id
+            WHERE t.user_id = ?
+            GROUP BY t.match_id
+            ORDER BY m.date_time DESC
+        ");
+        $stmt->execute([$userId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function soldByOrganizer(int $organizerId): int
     {
