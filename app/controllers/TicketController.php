@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../models/Ticket.php';
 require_once __DIR__ . '/../models/MatchGame.php';
+require_once __DIR__ . '/../services/MailService.php';
 
 class TicketController
 {
@@ -33,6 +34,8 @@ class TicketController
         $this->ticket->qr_code     = 'QR-' . uniqid();
 
         $this->ticket->save();
+        // MailService::send($_SESSION['email'], 'Confirmation de votre ticket', 'Merci pour votre achat de ticket, votre code QR est le suivant : ' . $this->ticket->qr_code);
+        MailService::send('amineelgaini1444@gmail.com', 'Confirmation de votre ticket', 'Merci pour votre achat de ticket, votre code QR est le suivant : ' . $this->ticket->qr_code);
 
         header('Location: /buy-match/matches/' . $match_id . '?success=1');
         exit;
