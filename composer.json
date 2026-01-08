@@ -1,6 +1,7 @@
 {
     "require": {
         "phpmailer/phpmailer": "^7.0",
-        "twig/twig": "^3.22"
+        "twig/twig": "^3.22",
+        "dompdf/dompdf": "^3.1"
     }
 }

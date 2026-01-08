@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../models/Ticket.php';
 require_once __DIR__ . '/../models/MatchGame.php';
 require_once __DIR__ . '/../services/MailService.php';
+require_once __DIR__ . '/../services/PdfService.php';
 
 class TicketController
 {
@@ -35,10 +36,35 @@ class TicketController
 
         $this->ticket->save();
         // MailService::send($_SESSION['email'], 'Confirmation de votre ticket', 'Merci pour votre achat de ticket, votre code QR est le suivant : ' . $this->ticket->qr_code);
-        MailService::send('amineelgaini1444@gmail.com', 'Confirmation de votre ticket', 'Merci pour votre achat de ticket, votre code QR est le suivant : ' . $this->ticket->qr_code);
+        // MailService::send('amineelgaini1444@gmail.com', 'Confirmation de votre ticket', 'Merci pour votre achat de ticket, votre code QR est le suivant : ' . $this->ticket->qr_code);
+        $this->sendTicket();
 
         header('Location: /buy-match/matches/' . $match_id . '?success=1');
         exit;
+    }
+
+    public function sendTicket()
+    {
+        $html = "
+            <h1>Ticket Confirmation</h1>
+            <p>Name: Amine</p>
+            <p>Order ID: #12345</p>
+        ";
+
+        $pdfPath = PdfService::generate($html, 'ticket_12345.pdf');
+
+        $sent = MailService::send(
+            'amineelgaini1444@gmail.com',
+            'Your Ticket',
+            "<p>Please find your ticket attached.</p>",
+            $pdfPath
+        );
+
+        if ($sent) {
+            echo "Email sent successfully!";
+        } else {
+            echo "Failed to send email.";
+        }
     }
 
 
