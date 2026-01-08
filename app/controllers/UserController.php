@@ -17,7 +17,10 @@ class UserController
 
     public function showLogin()
     {
-        require '../app/views/login.php';
+        View::render('login', [
+            'title' => 'Login',
+        ]);
+        // require '../app/views/login.php';
     }
 
     public function login()
