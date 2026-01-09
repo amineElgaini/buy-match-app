@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../models/Ticket.php';
-require_once __DIR__ . '/../models/MatchGame.php';
+require_once __DIR__ . '/../Models/Ticket.php';
+require_once __DIR__ . '/../Models/MatchGame.php';
 require_once __DIR__ . '/../services/MailService.php';
 require_once __DIR__ . '/../services/PdfService.php';
 

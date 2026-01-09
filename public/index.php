@@ -1,4 +1,11 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . './../app/Core/ErrorHandler.php';
+ErrorHandler::register();
+session_start();
+// error_reporting(E_ALL);
+// ini_set('display_errors', '1');
+
 $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -9,15 +16,9 @@ if (file_exists($envFile)) {
     }
 }
 
-session_start();
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../app/core/View.php';
-require_once __DIR__ . './../app/core/ErrorHandler.php';
-require_once __DIR__ . './../app/core/AppException.php';
+require_once __DIR__ . '/../app/Core/View.php';
+require_once __DIR__ . './../app/Core/AppException.php';
 require_once __DIR__ . './../app/Router.php';
-
-ErrorHandler::register();
-// throw new AppException("Test error working");
 
 $router = new Router();
 

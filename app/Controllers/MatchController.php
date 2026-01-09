@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../models/MatchGame.php';
-require_once __DIR__ . '/../models/Category.php';
-require_once __DIR__ . '/../models/Ticket.php';
+require_once __DIR__ . '/../Models/MatchGame.php';
+require_once __DIR__ . '/../Models/Category.php';
+require_once __DIR__ . '/../Models/Ticket.php';
 
 
 class MatchController

@@ -61,7 +61,7 @@ class Router
         }
 
         [$controller, $method] = $data['action'];
-        require_once __DIR__ . "/controllers/{$controller}.php";
+        require_once __DIR__ . "/Controllers/{$controller}.php";
         $instance = new $controller();
         call_user_func_array([$instance, $method], $params);
     }

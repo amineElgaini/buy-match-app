@@ -8,7 +8,46 @@ class ErrorHandler
     {
         set_exception_handler([self::class, 'handleException']);
         set_error_handler([self::class, 'handleError']);
+        register_shutdown_function([self::class, 'handleShutdown']);
     }
+
+    public static function handleShutdown(): void
+    {
+        $error = error_get_last();
+        if ($error && self::isFatal($error['type'])) {
+
+            // Create an ErrorException object to reuse logging
+            $e = new ErrorException(
+                $error['message'],
+                0,
+                $error['type'],
+                $error['file'],
+                $error['line']
+            );
+
+            // Log the fatal error
+            Logger::error(
+                "Fatal Error: " . $e->getMessage() .
+                    " in " . $e->getFile() .
+                    ":" . $e->getLine()
+            );
+
+            // Optionally render it
+            if (php_sapi_name() === 'cli') {
+                echo "Fatal Error: {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}\n";
+            } else {
+                $isApi = isset($_SERVER['HTTP_ACCEPT']) &&
+                    strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
+
+                if ($isApi) {
+                    self::renderJson($e);
+                } else {
+                    self::renderHtml($e);
+                }
+            }
+        }
+    }
+
 
     public static function handleException(Throwable $e): void
     {
@@ -23,7 +62,7 @@ class ErrorHandler
         http_response_code($statusCode);
 
         $isApi = isset($_SERVER['HTTP_ACCEPT']) &&
-                 strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
+            strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
 
         if ($isApi) {
             self::renderJson($e);
@@ -79,6 +118,11 @@ class ErrorHandler
     private static function isDebug(): bool
     {
         return isset($_ENV['APP_DEBUG']) &&
-               strtolower($_ENV['APP_DEBUG']) === 'true';
+            strtolower($_ENV['APP_DEBUG']) === 'true';
+    }
+
+    private static function isFatal(int $type): bool
+    {
+        return in_array($type, [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR]);
     }
 }

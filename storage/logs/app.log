@@ -15,3 +15,21 @@
 [2026-01-09 11:07:52] ERROR: Name is required in /var/www/html/buy-match/app/controllers/UserController.php:57
 [2026-01-09 11:08:43] ERROR: Name is required in /var/www/html/buy-match/app/controllers/UserController.php:57
 [2026-01-09 11:20:01] ERROR: Name is required in /var/www/html/buy-match/app/controllers/UserController.php:57
+[2026-01-09 14:34:38] ERROR: Class "App\Models\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:20
+[2026-01-09 14:34:40] ERROR: Class "App\Models\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:20
+[2026-01-09 14:38:11] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:19
+[2026-01-09 14:38:12] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:19
+[2026-01-09 14:38:12] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:19
+[2026-01-09 14:38:13] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:19
+[2026-01-09 14:38:15] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/models/Ticket.php:19
+[2026-01-09 14:39:01] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 14:39:02] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 14:39:40] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 14:39:45] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 14:39:45] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 14:39:45] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 14:40:15] ERROR: Class "App\Models\Ticket" not found in /var/www/html/buy-match/app/controllers/UserController.php:18
+[2026-01-09 16:27:59] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/Models/Ticket.php:19
+[2026-01-09 16:28:00] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/Models/Ticket.php:19
+[2026-01-09 16:28:16] ERROR: Class "App\Config\Database" not found in /var/www/html/buy-match/app/Models/Ticket.php:19
+[2026-01-09 16:28:53] ERROR: Name is required in /var/www/html/buy-match/app/Controllers/UserController.php:61
