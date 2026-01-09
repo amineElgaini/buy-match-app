@@ -1,19 +1,23 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        [$key, $value] = explode('=', $line, 2);
+        $_ENV[trim($key)] = trim($value);
+    }
+}
+
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../app/core/View.php';
+require_once __DIR__ . './../app/core/ErrorHandler.php';
+require_once __DIR__ . './../app/core/AppException.php';
+require_once __DIR__ . './../app/Router.php';
 
-
-require_once '../app/Router.php';
-
-// require_once '../app/controllers/UserController.php';
-// require_once '../app/controllers/MatchController.php';
-// require_once '../app/controllers/TicketController.php';
-// require_once '../app/controllers/CommentController.php';
-// require_once '../app/controllers/AdminController.php';
+ErrorHandler::register();
+// throw new AppException("Test error working");
 
 $router = new Router();
 

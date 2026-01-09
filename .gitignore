@@ -1,1 +1,10 @@
-vendor
+.env
+.idea/
+.vscode/
+/vendor/
+node_modules/
+cache/
+.DS_Store
+Thumbs.db
+# Optional: Logs (ignore in production, keep in dev if needed)
+# storage/logs/app.log

@@ -69,9 +69,9 @@
         <h2>Créer un compte</h2>
 
         <form method="POST" action="/buy-match/register">
-            <input type="text" name="name" placeholder="Nom complet" required>
-            <input type="email" name="email" placeholder="Adresse email" required>
-            <input type="password" name="password" placeholder="Mot de passe" required>
+            <input type="text" name="name" placeholder="Nom complet">
+            <input type="text" name="email" placeholder="Adresse email">
+            <input type="password" name="password" placeholder="Mot de passe">
 
             <select name="role">
                 <option value="user">Utilisateur (Acheteur)</option>

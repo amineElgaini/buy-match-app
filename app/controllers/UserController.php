@@ -28,7 +28,7 @@ class UserController
         $user = User::login($_POST['email'], $_POST['password']);
 
         if (!$user) {
-            die('Invalid credentials or account disabled');
+            throw new AppException("User not found", 404);
         }
 
         $_SESSION['user_id']   = $user->id;
@@ -52,6 +52,10 @@ class UserController
         $user->email = $_POST['email'];
         $user->password = $_POST['password'];
         $user->role = $_POST['role'] ?? 'user';
+
+        if (empty($user->name)) {
+            throw new AppException("Name is required", 422);
+        }
 
         $user->save();
 
