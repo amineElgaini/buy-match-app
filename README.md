@@ -1,4 +1,4 @@
-# Coach App
+# Buy Match
 
 A simple PHP MVC web application for managing sports matches, tickets, and user profiles with role-based access control (Admin, Organizer, and regular users).
 
@@ -38,8 +38,8 @@ A simple PHP MVC web application for managing sports matches, tickets, and user 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/coach-app.git
-cd coach-app
+git clone https://github.com/amineElgaini/buy-match-app.git
+cd buy-app
 ```
 
 2. Install dependencies using Composer:
@@ -63,7 +63,7 @@ cp .env.example .env
 
 ```env
 DB_HOST=localhost
-DB_NAME=coach_app
+DB_NAME=buy_match
 DB_USER=root
 DB_PASS=password
 ```
